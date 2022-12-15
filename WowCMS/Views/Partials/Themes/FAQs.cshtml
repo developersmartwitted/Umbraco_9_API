@@ -1,0 +1,23 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	IPublishedElement card = Model.Value<IEnumerable<IPublishedElement>>("cards").First();
+	var title = card.Value<string>("cdHeader");
+	var blurb = card.Value<string>("cdBlurb");
+    blurb = blurb.Replace("<ul>", "<ul class='colored' uk-accordion>");
+}
+<article class="dk-graded-back faq">
+    <div class="uk-container-expand">
+        <div class="uk-card">
+            <div class="uk-card-body">
+                <h3 class="uk-card-title clr-primary-1">@Html.Raw(title)</h3>
+                @Html.Raw(blurb)
+            </div>
+            <div class="uk-card-footer">
+                <a href="/faq" class="btn-primary">
+                    View More
+                </a>
+            </div>
+        </div>
+    </div>
+</article>

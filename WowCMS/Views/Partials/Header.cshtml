@@ -1,0 +1,160 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{ 
+	var root = Model.AncestorOrSelf(1);
+	var currentPage = Model.AncestorOrSelf(2);
+	var currentSubPage = Model.AncestorOrSelf(3);
+	var nodes = root.Children().Where(x => x.IsVisible());
+}
+<header class="uk-container-expand">
+    <nav class="uk-navbar-container" uk-navbar>
+        <!-- desktop navigation -->
+        <div class="uk-navbar-left uk-visible@m">
+            <ul class="uk-navbar-nav">
+                <li class="uk-navbar-item">
+                    <a class="uk-logo" href="/">
+                        <img alt="WOWS Global" src="/images/wows-global.png" width="300" height="74">
+                    </a>
+                </li>
+@{ 
+	foreach (IPublishedContent node in nodes) {
+		if (node.HasProperty("isNavigation") && node.Value<bool>("isNavigation")) {
+			var activeClass = "";
+            if (node.Url() == currentPage.Url()) activeClass = "uk-active";
+            var pageTitle = node.Value<string>("title");
+            var checkSubs = true;
+            if (node.IsDocumentType("partners") || node.IsDocumentType("blog")) checkSubs = false;
+            if (checkSubs && node.Children().Count() > 0) {
+                <li class="@activeClass">
+                    <a href="#">@pageTitle <span uk-navbar-parent-icon></span></a>
+                    <div class="uk-navbar-dropdown">
+                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                            @{ 
+                                foreach(IPublishedContent subnode in node.Children()) {
+			                        var activeClassChild = "";
+                                    if (subnode.Url() == currentSubPage.Url()) activeClassChild = "uk-active";
+                                    var subPageTitle = subnode.Value<string>("title");
+                                    var subPageLink = subnode.Url();
+									if (subnode.HasProperty("link") && subnode.HasValue("link")) {
+                                        if (subnode.IsDocumentType("internalRedirect")) {
+                                            var linkTo = subnode.Value<IPublishedContent>("link");
+                                            if (linkTo != null) {
+    											subPageLink = linkTo.Url();
+                                            }
+                                        } else {
+                                            subPageLink = subnode.Value<string>("link");
+                                        }
+									}
+                                    <li class="@activeClassChild"><a href="@subPageLink">@subPageTitle</a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </li>
+            } else {
+                var menuLink = node.Url();
+                var menuTarget = "";
+				if (node.HasProperty("link") && node.HasValue("link")) {
+                    if (node.IsDocumentType("internalRedirect")) {
+                        var linkTo = node.Value<IPublishedContent>("link");
+                        if (linkTo != null) {
+    						menuLink = linkTo.Url();
+                        }
+                    } else {
+                        menuLink = node.Value<string>("link");
+                        menuTarget = "target='new'";
+                    }
+					if (node.HasProperty("newWindow") && node.Value<bool>("newWindow")) {
+                        menuTarget = "target='new'";
+					}
+				}
+                <li class="@activeClass">
+                    <a href="@menuLink" @menuTarget>@pageTitle</a>
+                </li>
+            }
+        }
+    }
+}
+            </ul>
+        </div>            
+        <!-- mobile navigation toggle -->
+        <div class="uk-navbar-left uk-hidden@m">
+            <a class="uk-navbar-item uk-navbar-toggle uk-navbar-toggle-animate" uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon href=""></a>
+        </div>
+        <div class="uk-navbar-center uk-hidden@m">
+            <a class="uk-logo" href="/">
+                <img alt="WOWS Global" src="/images/wows-global.png" width="200">
+            </a>
+       </div>
+        <!-- mobile offscreen menu -->
+        <div id="offcanvas-nav" uk-offcanvas>
+            <div class="uk-offcanvas-bar">
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <a class="uk-logo" href="/">
+                    <img alt="WOWS Global" src="/images/wows-global.png" width="200">
+                </a>
+
+                <ul class="uk-nav-default" uk-nav>
+@{ 
+	foreach (IPublishedContent node in nodes) {
+		if (node.HasProperty("isNavigation") && node.Value<bool>("isNavigation")) {
+			var activeClass = "";
+            if (node.Url() == currentPage.Url()) activeClass = "uk-active";
+            var pageTitle = node.Value<string>("title");
+            var checkSubs = true;
+            if (node.IsDocumentType("partners") || node.IsDocumentType("blog")) checkSubs = false;
+            if (checkSubs && node.Children().Count() > 0) {
+                <li class="uk-parent @activeClass">
+                    <a href="#">@pageTitle <span uk-nav-parent-icon></span></a>
+                    <ul class="uk-nav-sub">
+                        @{ 
+							foreach(IPublishedContent subnode in node.Children()) {
+								var activeClassChild = "";
+								if (subnode.Url() == currentSubPage.Url()) activeClassChild = "uk-active";
+								var subPageTitle = subnode.Value<string>("title");
+								var subPageLink = subnode.Url();
+								if (subnode.HasProperty("link") && subnode.HasValue("link")) {
+                                    if (subnode.IsDocumentType("internalRedirect")) {
+                                        var linkTo = subnode.Value<IPublishedContent>("link");
+                                        if (linkTo != null) {
+    										subPageLink = linkTo.Url();
+                                        }
+                                    } else {
+                                        subPageLink = subnode.Value<string>("link");
+                                    }
+								}
+                                <li class="@activeClassChild"><a href="@subPageLink">@subPageTitle</a></li>
+                            }
+                        }
+                    </ul>
+                </li>
+            } else {
+                var menuLink = node.Url();
+                var menuTarget = "";
+				if (node.HasProperty("link") && node.HasValue("link")) {
+                    if (node.IsDocumentType("internalRedirect")) {
+                        var linkTo = node.Value<IPublishedContent>("link");
+                        if (linkTo != null) {
+    						menuLink = linkTo.Url();
+                        }
+                    } else {
+                        menuLink = node.GetProperty("link").GetValue().ToString();
+                        menuTarget = "target='new'";
+                    }
+					if (node.HasProperty("newWindow") && node.Value<bool>("newWindow")) {
+                        menuTarget = "target='new'";
+					}
+				}
+                <li class="@activeClass">
+                    <a href="@menuLink" @menuTarget>@pageTitle</a>
+                </li>
+            }
+            <li class="uk-nav-divider"></li>
+        }
+    }
+}
+                    <li class="contact"><a href="/contact-us">Get In Touch With Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

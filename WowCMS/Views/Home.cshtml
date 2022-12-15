@@ -1,0 +1,92 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = "default.cshtml";
+	IHtmlContent imgSrc = null;
+    var title = Model.Value<string>("hmTitle");
+	var body = Model.Value<string>("hmBody");
+	var hmCTALink = Model.Value<string>("hmCTALink");
+	var hmCTA = Model.Value<string>("hmCTA");
+	var hmCTALink2 = Model.Value<string>("hmCTALink2");
+	var hmCTA2 = Model.Value<string>("hmCTA2");
+    if (Model.HasProperty("hmImage")) {
+		IPublishedContent logo = Model.Value<IPublishedContent>("hmImage");
+		if (logo != null) {
+			imgSrc = Url.GetCropUrl(logo, width: 800, quality: 100);
+		}
+    }
+}
+<div class="uk-container-expand site">
+    <section>
+        <article class="dk-graded-back">
+            <div class="uk-container-expand uk-child-width-1-2@m uk-child-width-1-1 uk-flex-middle" uk-grid>
+                <div class="uk-card">
+                    <div class="uk-card-body">
+                        <h1 class="uk-card-title">@Html.Raw(title)</h1>
+                        @Html.Raw(body)
+                    </div>
+                    <div class="uk-card-footer">
+                        <a href="@hmCTALink" class="btn-primary">
+                            @hmCTA
+                        </a>
+                        <a href="@hmCTALink2" target="new" class="btn-secondary">
+                            @hmCTA2
+                        </a>
+                    </div>
+                </div>
+                <div class="uk-card uk-flex-first uk-flex-last@m">
+                    <div class="uk-card-body">
+                        <img src="@imgSrc" alt="@title">
+                    </div>
+                </div>
+            </div>
+        </article>
+@{
+	var items = Model.Value<IEnumerable<IPublishedElement>>("themedModules");
+
+	foreach (IPublishedElement item in items)
+	{
+		var theme = item.Value<string>("theme");
+		switch(theme)
+		{
+		case "Graded Media Cards":
+			@await Html.PartialAsync("Themes/GradedMediaCards", item);
+			break;
+		case "Dark Bulleted Image":
+			@await Html.PartialAsync("Themes/DarkBulletedImage", item);
+			break;
+		case "Logo List":
+			@await Html.PartialAsync("Themes/LogoList", item);
+			break;
+		case "Graded Steps":
+			@await Html.PartialAsync("Themes/GradedSteps", item);
+			break;
+		case "Graded Stats":
+			@await Html.PartialAsync("Themes/GradedStats", item);
+			break;
+		case "Newsletter":
+			@await Html.PartialAsync("Themes/Newsletter", item);
+			break;
+		case "FAQs":
+			@await Html.PartialAsync("Themes/FAQs", item);
+			break;
+		case "Dark Graded Media Cards":
+			@await Html.PartialAsync("Themes/DarkGradedMediaCards", item);
+			break;
+		case "Checked Items":
+			@await Html.PartialAsync("Themes/CheckedItems", item);
+			break;
+		case "Boxed Media Cards":
+			@await Html.PartialAsync("Themes/BoxedMediaCards", item);
+			break;
+		case "Boxed List":
+			@await Html.PartialAsync("Themes/BoxedList", item);
+			break;
+		case "Checked Lists":
+			@await Html.PartialAsync("Themes/CheckedLists", item);
+			break;
+		}
+    }
+}
+    </section>
+</div>

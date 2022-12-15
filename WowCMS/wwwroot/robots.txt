@@ -1,0 +1,4 @@
+﻿User-agent: *
+Disallow: /Umbraco/
+
+Sitemap: http://wowsglobal.com/sitemap

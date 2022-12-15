@@ -1,0 +1,96 @@
+.img-full-width img {
+	width: 100% !important;
+	height: auto !important;
+}
+.uk-grid {
+	display: flex;
+	flex-direction: row;
+}
+.clr-primary-1 {
+	color: rgb(2, 34, 59) !important;
+}
+.clr-primary-2 {
+	color: rgb(12, 218, 233) !important;
+}
+.clr-primary-3 {
+	color: rgb(255, 179, 0) !important;
+}
+.clr-primary-4 {
+	color: rgb(32, 154, 219) !important;
+}
+.clr-primary-5 {
+	color: rgb(253, 79, 102) !important;
+}
+.clr-neutral-1 {
+	color: rgb(230, 230, 230) !important;
+}
+.clr-neutral-2 {
+	color: rgb(222, 226, 230) !important;
+}
+.clr-neutral-3 {
+	color: rgb(165, 171, 179) !important;
+}
+.clr-neutral-0 {
+	color: rgb(0, 0, 0) !important;
+}
+.li-primary-1 {
+	color: rgb(2, 34, 59) !important;
+}
+
+.li-primary-2 {
+	color: rgb(12, 218, 233) !important;
+}
+
+.li-primary-3 {
+	color: rgb(255, 179, 0) !important;
+}
+
+.li-primary-4 {
+	color: rgb(32, 154, 219) !important;
+}
+
+.li-primary-5 {
+	color: rgb(253, 79, 102) !important;
+}
+
+/**umb_name:Image Full Width*/
+.img-full-width {
+	width: 100%;
+	height: auto !important;
+}
+/**umb_name:Color Dark Blue*/
+.clr-primary-1 {
+	color: rgb(2, 34, 59);
+}
+/**umb_name:Color Turquoise*/
+.clr-primary-2 {
+	color: rgb(12, 218, 233);
+}
+/**umb_name:Color Yellow*/
+.clr-primary-3 {
+	color: rgb(255, 179, 0);
+}
+/**umb_nameColor:Color Blue*/
+.clr-primary-4 {
+	color: rgb(32, 154, 219);
+}
+/**umb_name:Color Red*/
+.clr-primary-5 {
+	color: rgb(253, 79, 102);
+}
+/**umb_name:Color White*/
+.clr-neutral-1 {
+	color: rgb(255, 255, 255);
+}
+/**umb_name:Color Lt Gray*/
+.clr-neutral-2 {
+	color: rgb(222, 226, 230);
+}
+/**umb_name:Color Gray*/
+.clr-neutral-3 {
+	color: rgb(165, 171, 179);
+}
+/**umb_name:Color Black*/
+.clr-neutral-0 {
+	color: rgb(0, 0, 0);
+}

@@ -1,0 +1,36 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	var cards = Model.Value<IEnumerable<IPublishedElement>>("cards");
+}
+<article class="lt-back lt-graded-back">
+    <div class="uk-container-expand">
+        <div class="uk-child-width-1-3@s uk-child-width-1-1 checked-list" uk-grid>
+@{ 
+	foreach(IPublishedElement card in cards) {
+		IHtmlContent imgSrc = null;
+		var title = card.Value<string>("cdHeader");
+		var blurb = card.Value<string>("cdBlurb");
+		IPublishedContent img = card.Value<IPublishedContent>("cdImage");
+		if (img != null) {
+			imgSrc = Url.GetCropUrl(img, width: 100, quality: 100);
+		}
+        <div class="uk-card checked">
+            <div class="uk-card-media-left">
+                <img src="@imgSrc" alt="">
+                <span class="uk-card-title">@Html.Raw(title)</span>
+            </div>
+            <div class="uk-card-body">
+                @Html.Raw(blurb)
+            </div>
+        </div>
+    }
+}
+        </div>
+        <div class="uk-card-footer centered">
+            <a href="/contact-us" class="btn-primary">
+                Contact Us
+            </a>
+        </div>
+    </div>
+</article>

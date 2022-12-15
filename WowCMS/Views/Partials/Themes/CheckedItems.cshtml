@@ -1,0 +1,42 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	IPublishedElement card = Model.Value<IEnumerable<IPublishedElement>>("cards").First();
+
+	var title = card.Value<string>("cdHeader");
+	var blurb = card.Value<string>("cdBlurb");
+	IHtmlContent imgSrc = null;
+	var cta = card.Value<string>("cdCTA");
+	var ctaLink = card.Value<string>("cdCTALink");
+	var target = "";
+	IPublishedContent img = card.Value<IPublishedContent>("cdImage");
+	if (img != null) {
+		imgSrc = Url.GetCropUrl(img, width: 300, quality: 100);
+	}
+	if (card.Value<bool>("cdCTANewWin")) {
+		target = "target='new'";
+	}
+}
+<article class="lt-back lt-graded-back">
+    <div class="uk-container-expand">
+        <div class="uk-card media">
+            <div class="uk-card-header">
+                <div class="uk-card-title centered">@Html.Raw(title)</div>
+            </div>
+            <div class="uk-card-body uk-flex-middle" uk-grid>
+                <div class="uk-card-media-left uk-width-1-4@m uk-width-1-1 centered">
+                    <img src="@imgSrc">
+                </div>
+                @Html.Raw(blurb)
+            </div>
+            @if(!string.IsNullOrEmpty(cta)) { 
+                <div class="uk-card-footer centered">
+                    <a href="@ctaLink" class="btn-primary" @target>
+                        @cta
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</article>

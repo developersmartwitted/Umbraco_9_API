@@ -1,0 +1,55 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	var cards = Model.Value<IEnumerable<IPublishedElement>>("cards");
+	IPublishedElement firstCard = cards.First();
+	var mainCtaLink = firstCard.Value<string>("cdCTALink");
+	var mainTarget = "";
+	if (firstCard.Value<bool>("cdCTANewWin")) {
+		mainTarget = "target='new'";
+	}
+}
+<article class="dk-graded-back">
+    <div class="uk-container-expand">
+		<div class="uk-card">
+			<div class="uk-card-body">
+				<div class="uk-card-title">@Html.Raw(@firstCard.Value<string>("cdHeader"))</div>
+			</div>
+		</div>
+        <div class="uk-child-width-1-4@s uk-child-width-1-1 centered uk-flex-top" uk-grid>
+@{ 
+	var cardCount = 0;
+	string[] colorOffset = { "5", "4", "2", "3" };
+
+	foreach(IPublishedElement card in cards) {
+		cardCount++;
+		if (cardCount > 1) {
+			IHtmlContent imgSrc = null;
+			var title = card.Value<string>("cdHeader");
+			var blurb = card.Value<string>("cdBlurb");
+			IPublishedContent img = card.Value<IPublishedContent>("cdImage");
+			if (img != null) {
+				imgSrc = Url.GetCropUrl(img, width: 200, quality: 100);
+			}
+            <div class="uk-card">
+                <div class="uk-card-media-top">
+                    <img src="@imgSrc">
+                </div>
+                <div class="uk-card-body">
+                    <h4 class="uk-card-title clr-neutral-1">@Html.Raw(title)</h4>
+                    @Html.Raw(blurb)
+                </div>
+            </div>
+        }
+    }
+}
+        </div>
+        <div class="uk-card">
+            <div class="uk-card-footer list-footer">
+                <a href="@mainCtaLink" class="btn-primary" @mainTarget>
+                    @Html.Raw(firstCard.Value<string>("cdCTA"))
+                </a>
+            </div>
+        </div>
+    </div>
+</article>

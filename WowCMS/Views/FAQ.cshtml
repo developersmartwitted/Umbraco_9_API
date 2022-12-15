@@ -1,0 +1,71 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "default.cshtml";
+    var query = HttpContextAccessor.HttpContext.Request.Query["query"];
+    IEnumerable<IPublishedContent> faqs = Model.Children();
+    if (!string.IsNullOrEmpty(query)) {
+        var cleanQuery = query.ToString().ToLower();
+        faqs = Model.Children().Where(x => x.Value<string>("question").ToLower().Contains(cleanQuery) ||
+            x.Value<string>("answer").ToLower().Contains(cleanQuery));
+    }
+
+
+	List<string> allTags = new List<string>();
+	foreach (IPublishedContent node in faqs) {
+		string[] nodeTags = node.Value<string[]>("tags");
+		if (nodeTags != null) {
+			foreach (string tag in nodeTags) {
+				if (!allTags.Contains(tag)) {
+					allTags.Add(tag);
+				}
+			}
+		}
+	}
+    allTags.Sort();
+}
+<div class="uk-container-expand site">
+    <section class="faq" uk-grid uk-filter="target: .faq-filter">
+        <aside class="uk-width-1-1  uk-width-1-4@m">
+            <form id="search-form" class="uk-search uk-search-default" method="get">
+                <a href="javascript:document.getElementById('search-form').submit();" class="uk-search-icon-flip" uk-search-icon></a>
+                <input id="query" name="query" class="uk-search-input" type="search" placeholder="Search" value="@query">
+            </form>
+            <ul>
+                <li uk-filter-control=""><a href="#">All</a></li>
+@{
+
+    foreach (string tag in allTags) {
+	    var tagName = ".tag-" + tag.ToLower().Replace(" ", "-");
+        <li uk-filter-control="@tagName"><a href="#">@tag</a></li>
+	}
+}
+            </ul>
+        </aside>
+        <article class="lt-back uk-width-1-1 uk-width-3-4@m">
+            <ul class="faq-filter" uk-accordion>
+                
+@{ 
+	foreach(IPublishedContent node in faqs) {
+		var tags = "";
+		var question = node.Value<string>("question");
+		var answer = node.Value<string>("answer");
+		string[] tagList = node.Value<string[]>("tags");
+		if (tagList != null) {
+			foreach (string tag in tagList) {
+				tags += " tag-" + tag.ToLower().Replace(" ", "-");
+			}
+		}
+		<li class="@tags">
+            <a class="uk-accordion-title" href="#">@question</a>
+            <div class="uk-accordion-content">
+                @Html.Raw(answer)
+            </div>
+        </li>
+
+	}
+}
+            </ul>
+        </article>
+    </section>
+</div>

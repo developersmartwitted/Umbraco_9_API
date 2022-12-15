@@ -1,0 +1,61 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	var cards = Model.Value<IEnumerable<IPublishedElement>>("cards");
+	IPublishedElement firstCard = cards.First();
+}
+<article class="lt-back lt-graded-back">
+    <div class="uk-container-expand">
+		<div class="uk-card">
+			<div class="uk-card-body">
+				<div class="uk-card-title">@Html.Raw(@firstCard.Value<string>("cdHeader"))</div>
+			</div>
+		</div>
+        <div class="uk-child-width-1-3@m uk-child-width-1-1 centered boxed uk-grid-match" uk-grid>
+@{ 
+	var cardCount = 0;
+	string[] colorOffset = { "5", "4", "2", "3" };
+
+	foreach(IPublishedElement card in cards) {
+		cardCount++;
+		if (cardCount > 1) {
+			IHtmlContent imgSrc = null;
+			var title = card.Value<string>("cdHeader");
+			var blurb = card.Value<string>("cdBlurb");
+			var cta = card.Value<string>("cdCTA");
+			var ctaLink = card.Value<string>("cdCTALink");
+			var target = "";
+			IPublishedContent img = card.Value<IPublishedContent>("cdImage");
+			if (img != null) {
+				imgSrc = Url.GetCropUrl(img, width: 200, quality: 100);
+			}
+			if (card.Value<bool>("cdCTANewWin")) {
+				target = "target='new'";
+			}
+			var linkClass = "clr-primary-" + colorOffset[((cardCount % 4))];
+			if (string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(cta)) {
+				linkClass = "btn-primary";
+			}
+            <div class="uk-flex-stretch">
+                <div class="uk-card">
+                    <div class="uk-card-media-top">
+                        <img src="@imgSrc" alt="">
+                    </div>
+                    <div class="uk-card-body">
+                        <span class="uk-card-title clr-primary-1">@Html.Raw(@title)</span>
+                    </div>
+					@if (!string.IsNullOrEmpty(cta)) {
+						<div class="uk-card-footer">
+							<a href="@ctaLink" class="@linkClass" @target>
+								@cta
+							</a>
+						</div>
+					}
+                </div>
+            </div>
+        }
+    }
+}
+		</div>
+    </div>
+</article>

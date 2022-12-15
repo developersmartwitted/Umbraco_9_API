@@ -1,0 +1,76 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	IPublishedElement card = Model.Value<IEnumerable<IPublishedElement>>("cards").First();
+
+	var title = card.Value<string>("cdHeader");
+	var blurb = card.Value<string>("cdBlurb");
+	var cta = card.Value<string>("cdCTA");
+	var ctaLink = card.Value<string>("cdCTALink");
+	var ctaNewWin = card.Value<bool>("cdCTANewWin");
+	var cta2 = card.Value<string>("cdCTA2");
+	var cta2Link = card.Value<string>("cdCTA2Link");
+	var cta2NewWin = card.Value<bool>("cdCTA2NewWin");
+	var imgPosition = card.Value<string>("cdImagePlacement").ToLower();
+
+
+	IHtmlContent imgSrc = null;
+	IPublishedContent img = card.Value<IPublishedContent>("cdImage");
+	if (img != null) {
+		imgSrc = Url.GetCropUrl(img, width: 800, quality: 100);
+	}
+
+	var newWin = "";
+	if (cta != null && ctaNewWin) {
+		newWin = "target='new'";
+	}
+	var articleClass = "dk-graded-back";
+	var articleStyle = "";
+    var containerClass = "uk-container-expand uk-child-width-1-2@m uk-child-width-1-1 uk-flex-middle";
+    var containerGrid = "uk-grid";
+	if (imgPosition == "background") {
+		articleClass = "dk-graded-back img-back";
+		articleStyle = "background-image: url('" + imgSrc + "');";
+        containerClass = "uk-container-expand";
+        containerGrid = "";
+	}
+}
+<article class="@articleClass" style="@articleStyle">
+    <div class="@containerClass" @containerGrid>
+@if (imgPosition == "left") {
+    <div class="uk-card uk-flex-first">
+        <div class="uk-card-body">
+            <img src="@imgSrc">
+        </div>
+    </div>
+}
+    <div class="uk-card">
+        <div class="uk-card-body">
+            <h3 class="uk-card-title">@Html.Raw(title)</h3>
+            @Html.Raw(blurb)
+        </div>
+        <div class="uk-card-footer">
+            <a href="@ctaLink" @newWin class="btn-primary">
+                @cta
+            </a>
+            @{ 
+				if (cta2 != null) {
+	                var newWin2 = "";
+                    if (cta2NewWin) {
+                        newWin2 = "target='new'";
+                    }
+                    <a href="@cta2Link" @newWin2 class="btn-secondary">@cta2</a>
+                }
+            }
+        </div>
+    </div>
+@if (imgPosition == "right") {
+    <div class="uk-card uk-flex-first uk-flex-last@m">
+        <div class="uk-card-body">
+            <img src="@imgSrc">
+        </div>
+    </div>
+}
+    </div>
+</article>

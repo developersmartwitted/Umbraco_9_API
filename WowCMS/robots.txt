@@ -1,0 +1,12 @@
+﻿User-agent: *
+Disallow: /Controllers/
+Disallow: /App_Plugins/
+Disallow: /bin/
+Disallow: /db/
+Disallow: /Helpers/
+Disallow: /obj/
+Disallow: /Properties/
+Disallow: /Umbraco/
+Disallow: /Views/
+
+Sitemap: http://wowsglobal.com/sitemap

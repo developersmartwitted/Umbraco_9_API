@@ -1,0 +1,32 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{ 
+	IEnumerable<IPublishedContent> quickLinks = UmbracoContext.Content.GetByXPath("//quickLinks").First().Children().Where(x => x.IsPublished());
+}
+<aside class="uk-width-1-1 uk-width-2-5@m">
+    <div class="uk-card">
+        <div class="uk-card-body">
+            <div class="uk-card-title">Quick Links</div>
+            <ul>
+@{ 
+    foreach (IPublishedContent node in quickLinks) {
+        var pageLink = "";
+        var pageTitle = node.Value<string>("title");
+		if (node.HasProperty("link") && node.HasValue("link")) {
+            if (node.IsDocumentType("internalRedirect")) {
+                var linkTo = node.Value<IPublishedContent>("link");
+                if (linkTo != null) {
+    				pageLink = linkTo.Url();
+                }
+            } else {
+                pageLink = node.Value<string>("link");
+            }
+		}
+        <li>
+            <a href="@pageLink">@pageTitle</a>
+        </li>
+    }
+}
+            </ul>
+        </div>
+    </div>
+</aside>

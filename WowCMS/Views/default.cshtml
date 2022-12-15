@@ -1,0 +1,100 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = null;
+	var root = Model.AncestorOrSelf(1);
+    var siteTitle = root.Value<string>("metaTitle");
+    var siteDescription = root.Value<string>("metaDescription");
+    var metaTitle = Model.Value<string>("metaTitle");
+    var metaKeywords = Model.Value<string>("metaKeywords");
+    var metaDescription = Model.Value<string>("metaDescription");
+    var pageTitle = "WOWS Global";
+    if (Model.Name != "Home Page") pageTitle += " : " + metaTitle;
+	/*
+	TODO:
+	#- test reCAPTCHA on contact form live
+	#- test chat box live
+	#- test cookiebot live
+	#- add google tag manager and test live
+	#- hookup contact form and test live
+    - push new controllers live (FormController in particular)
+    - add admin emails to form??
+
+
+    SWAGGER API Testing:
+    /swagger/index.html
+	*/
+}
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@pageTitle</title>    
+
+    <meta name="description" content="@metaDescription" />
+    <meta name="keywords" content="@metaKeywords" />
+
+	<meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="@siteTitle" />
+	<meta property="og:type" content="website" />
+    <meta property="og:title" content="@siteTitle" />
+    <meta property="og:description" content="@siteDescription" />
+	<meta property="og:url" content="https://www.wowsglobal.com/" />
+	<meta property="og:image" content="https://www.wowsglobal.com/images/wows-global.png" />
+	<meta property="og:image:type" content="image/png" />
+	<meta property="og:image:width" content="300" />
+	<meta property="og:image:height" content="74" />
+
+	<meta name="twitter:site" content="@@WOWS_Global" />
+	<meta name="twitter:label1" content="Est. reading time" />
+	<meta name="twitter:data1" content="5 minutes" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:domain" content="https://wowsglobal.com/">
+    <meta name="twitter:site" content="@@WOWS_Global" />
+    <meta name="twitter:site:id" content="@@WOWS_Global" />
+    <meta name="twitter:creator" content="@@WOWS_Global" />
+    <meta name="twitter:title" content=":: Wows Global ::" />
+    <meta name="twitter:url" content="https://wowsglobal.com/" />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:image" content="~/images/wows-global-favicon-563x419.png" />
+    <meta name="twitter:image:src" content="~/images/wows-global-favicon-563x419.png" />
+    <meta name="twitter:card:src" content="~/images/wows-global-favicon-563x419.png" />
+    
+    <link rel="icon" href="~/images/wows-global-favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" href="~/images/wows-global-favicon-192x192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="~/images/wows-global-favicon-180x180.png" />
+    <meta name="msapplication-TileImage" content="~/images/wows-global-favicon-270x270.png" />
+
+    <link rel="stylesheet" href="~/css/uikit.min.css" />
+    <link rel="stylesheet" href="~/css/core.css" />
+
+    <!--
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="d69170fd-9c46-4875-9b2c-6d6527be70d6" data-blockingmode="auto" type="text/javascript"></script>
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WN3MQZ4');
+    </script>
+    -->
+    
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/uikit.min.js"></script>
+    <script src="~/js/uikit-icons.min.js"></script>
+
+</head>
+<body uk-flex uk-flex-column>
+    <a id="top"></a>
+    @await Html.PartialAsync("Header", Model)
+
+	@RenderBody()
+    
+    @await Html.PartialAsync("Footer", Model)
+    <a class="btn-scroll-top" href="#top" uk-scroll><span uk-icon="icon: chevron-up;"></span></a>
+
+    <script src="//code.tidio.co/gtvncwijwnknvvsuc1xrydqbtnoio5z1.js" async></script> 
+</body>
+</html>

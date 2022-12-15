@@ -1,0 +1,112 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "default.cshtml";
+	var title = Model.Value<string>("title");
+	var blurb = Model.Value<string>("blurb");
+	var rewardDetails = Model.Value<string>("rewardDetails");
+	var rewardLink = Model.Value<string>("rewardLink");
+	IHtmlContent imgSrc = null;
+    if (Model.HasProperty("companyLogo")) {
+		IPublishedContent logo = Model.Value<IPublishedContent>("companyLogo");
+		if (logo != null) {
+			imgSrc = Url.GetCropUrl(logo, height: 200, quality: 100);
+		}
+    }
+	IHtmlContent hdrImgSrc = null;
+    if (Model.HasProperty("image")) {
+		IPublishedContent header = Model.Value<IPublishedContent>("image");
+		if (header != null) {
+			hdrImgSrc = Url.GetCropUrl(header, width: 1440, quality: 100);
+		}
+    }
+	var redeemTitle = Model.Value<string>("rmTitle");
+	var tickedItems = Model.Value<string>("rmTicked");
+	var reedeemBody = Model.Value<string>("rmBody");
+	var callToAction = Model.Value<string>("rmCTA");
+	var cTALink = Model.Value<string>("rmCTALink");
+}
+<div class="uk-container-expand site">
+    <section class="partner">
+        <article class="img-back" style="background-image: url('@hdrImgSrc');">
+            <div class="uk-container-expand">
+                <div class="uk-card">
+                    <div class="uk-card-body">
+                        <h1 class="uk-card-title">@title</h1>
+                        <p>@blurb</p>
+                    </div>
+                    <div class="uk-card-footer">
+                        <a href="https://wowsglobal.com/signup" class="btn-primary">
+                            Create Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <article class="lt-back">
+            <div class="uk-container-expand uk-flex-middle" uk-grid>
+                <div class="uk-card uk-width-3-5@m uk-width-1-1">
+                    <div class="uk-card-body">
+                        <h2 class="uk-card-title">Reward Details</h2>
+                        @Html.Raw(rewardDetails)
+                        <div class="redeem">
+                            @Html.Raw(reedeemBody)
+                        </div>
+                    </div>
+                    <div class="uk-card-footer">
+                        <a href="@rewardLink" target="new" class="btn-primary">
+                            Claim Reward
+                        </a>
+                    </div>
+                </div>
+                <div class="uk-card uk-flex-first uk-flex-last@m uk-width-2-5@m uk-width-1-1">
+                    <div class="uk-card-body">
+                        <img src="@imgSrc" alt="@title">
+                    </div>
+                </div>
+            </div>
+        </article>
+        <article class="lt-back">
+            <div class="uk-container-expand">
+                <div class="uk-card media" uk-grid>
+                    <div class="uk-card-body">
+                        <div class="uk-card-title centered">
+                            <h2>How to redeem this reward?</h2>
+                        </div>
+                        <ul class="boxed uk-child-width-1-3@m uk-child-width-1-1 uk-grid-match" uk-grid>
+                            
+@{ 
+    var items = Model.Value<IEnumerable<IPublishedElement>>("rmTicked");
+
+    foreach (var item in items)
+    {
+        var tickMark = "/images/tick-" + item.Value<string>("tickColor").ToLower() + ".svg";
+        var tickTitle = item.Value<string>("tickTitle");
+        var tickBlurb = item.Value<string>("tickBlurb");
+        <li>
+            <div>
+                <img src="@tickMark">
+                <p>
+                    <span>@tickTitle</span><br />
+                    @tickBlurb
+                </p>
+            </div>
+        </li>
+    }
+}
+                        </ul>
+                    </div>
+@{ 
+    if (Model.HasProperty("rmCTA") && Model.HasValue("rmCTA")) {
+		var cta = Model.Value<string>("rmCTA");
+		var ctaLink = Model.Value<string>("rmCTALink");
+		<div class="uk-card-footer">
+            <a href="@ctaLink" class="btn-primary">@cta</a>
+        </div>
+    }
+}
+                </div>
+            </div>
+        </article>
+    </section>
+</div>

@@ -1,0 +1,179 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "default.cshtml";
+	var root = Model.AncestorOrSelf(1);
+	IPublishedContent solutions = root.Children().Where(x => x.IsPublished() && x.Name == "Solutions").First();
+}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+    /*
+jQuery("#frm-contact-request").addEventListener("submit",function(evt) {
+    var response = grecaptcha.getResponse();
+    if(response.length == 0) { 
+        //reCaptcha not verified
+        alert("please verify you are humann!"); 
+        evt.preventDefault();
+        return false;
+    }
+    jQuery("#contact-form-submit").removeClass("uk-hidden");
+});
+*/
+jQuery("#contact-form-submit").click(function (event) {
+    var $form = jQuery("#frm-contact-request");
+    $form.submit();
+});
+jQuery("#frm-contact-request").submit(function (event) {
+    event.preventDefault();    
+    var response = grecaptcha.getResponse();
+    var validated = true;
+    var $form = jQuery(this);
+    var $first = $form.find("#fld-first");
+    var firstResult = $form.find("p[name='fld-first-result']");
+    var $last = $form.find("#fld-last");
+    var lastResult = $form.find("p[name='fld-last-result']");
+    var $email = $form.find("#fld-email");
+    var emailResult = $form.find("p[name='fld-email-result']");
+    var $product = $form.find("#fld-topic");
+    var $note = $form.find("#fld-note");
+    var noteResult = $form.find("p[name='fld-note-result']");
+    var button = $form.find("#contact-form-submit");
+    var data = {
+        firstName: $first.val().trim(),
+        lastName: $last.val().trim(),
+        email: $email.val().trim(),
+        topic: $product.val(),
+        note: $note.val().trim(),
+        recaptcha: response
+    };
+    if(response.length == 0) { 
+        //reCaptcha not verified
+        // alert("please verify you are humann!"); 
+        noteResult.removeClass("uk-text-success");
+        noteResult.addClass("uk-text-danger");
+        noteResult.text("Please verify you are human, checking the reCatpcha box");
+        button.removeClass("uk-hidden");
+        return false;
+    } else {
+        jQuery("#g-Recaptcha-Response").val(response);
+	}
+    if (!validateField(data.firstName != '', $first, firstResult, "First name is required")) {
+        validated = false;
+	}
+    if (!validateField(data.lastName != '', $last, lastResult, "Last name is required")) {
+        validated = false;
+	}
+    var regexEmail = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+    if (!validateField(regexEmail.test(data.email), $email, emailResult, "Invalid email address")) {
+        validated = false;
+	}
+    var alphaNumeric = /^[a-z\d\-_\s]+$/i;
+    if (!validateField((alphaNumeric.test(data.note) || data.note == ''), $note, noteResult, "Please restrict your notes to alpabetic or numeric messages only")) {
+        validated = false;
+	}
+
+    if (validated) {
+        noteResult.addClass("uk-text-success");
+        noteResult.text("Submitting contact form");
+        button.addClass("uk-hidden");
+
+        jQuery.ajax({
+            url:'/umbraco/api/form/contactrequest/',
+            type:'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success:function(res){
+                console.log("success", res);
+                noteResult.addClass("uk-text-success");
+                noteResult.text("Contact form submitted successfully");
+            },
+            error:function(res){
+                console.log("error", res);
+                noteResult.removeClass("uk-text-success");
+                noteResult.addClass("uk-text-danger");
+                noteResult.text(res.responseText);
+                button.removeClass("uk-hidden");
+            }
+        });
+	}
+});
+function validateField(isValid, field, results, message) {
+    if (isValid) {
+        field.removeClass("uk-form-danger");
+        field.removeClass("uk-form-success");
+        results.removeClass("uk-text-danger");
+        results.text(' ');
+        return true;
+    } else {
+        field.addClass("uk-form-danger");
+        results.addClass("uk-text-danger");
+        results.text(message);
+        return false;
+	}
+}
+</script>
+<div class="uk-container-expand site">
+    <section class="form">
+        <article class="lt-back">
+            <div class="uk-container-expand">
+                <div class="uk-card">
+                    <form class="uk-form-horizontal" id="frm-contact-request">
+                    <input type="hidden" id="g-Recaptcha-Response" value="" />
+                    <div class="uk-card-body">
+                        <h1 class="uk-card-title">Get In Touch</h1>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="fld-first">First Name <span class="clr-primary-5">*</span></label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="fld-first" type="text">
+                                    <p name="fld-first-result"></p>
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="fld-last">Last Name <span class="clr-primary-5">*</span></label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="fld-last" type="text">
+                                    <p name="fld-last-result"></p>
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="fld-email">Email Address <span class="clr-primary-5">*</span></label>
+                                <div class="uk-form-controls">
+                                    <input class="uk-input" id="fld-email" type="text">
+                                    <p name="fld-email-result"></p>
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="fld-topic">Select</label>
+                                <div class="uk-form-controls">
+                                    <select class="uk-select" id="fld-topic">
+                                        <option value="">Select Product & Service</option>
+@{ 
+    foreach(IPublishedContent node in solutions.Children()) {
+        var option = node.Value<string>("title");
+        <option>@option</option>
+    }
+}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="fld-note">Note</label>
+                                <div class="uk-form-controls">
+                                    <textarea class="uk-textarea" id="fld-note" maxlength="500" rows="5"></textarea>
+                                    <div class="g-recaptcha" data-sitekey="6Ldt7g0iAAAAAK5bepl7ubHWfb_J0JAkZJHGITaj"></div>
+                                    <p name="fld-note-result"></p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="uk-card-footer">
+                        <a href="#" id="contact-form-submit" class="btn-primary">
+                            Submit
+                        </a>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>

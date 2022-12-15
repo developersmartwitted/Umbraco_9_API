@@ -1,0 +1,97 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "default.cshtml";
+    var hmTitle = Model.Value<string>("hmTitle");
+    var hmBody = Model.Value<string>("hmBody");
+    var hmCTALink = Model.Value<string>("hmCTALink");
+    var hmCTA = Model.Value<string>("hmCTA");
+    var rmTitle = Model.Value<string>("rmTitle");
+    var rmCTALink = Model.Value<string>("rmCTALink");
+    var rmCTA = Model.Value<string>("rmCTA");
+}
+<div class="uk-container-expand site">
+    <section>
+        <article class="dk-graded-back">
+            <div class="uk-container-expand">
+                <div class="uk-card">
+                    <div class="uk-card-body">
+                        <h1 class="uk-card-title">@Html.Raw(hmTitle)</h1>
+                        @Html.Raw(hmBody)
+                    </div>
+                    <div class="uk-card-footer">
+                        <a href="@hmCTALink" class="btn-primary">
+                            @hmCTA
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+    <section class="partners" uk-grid uk-filter="target: .partner-filter">
+        <aside class="uk-width-1-1  uk-width-1-4@m">
+            <ul>
+                <li uk-filter-control=""><a href="#">All</a></li>
+@{ 
+	List<string> allTags = new List<string>();
+	foreach(IPublishedContent node in Model.Children()) {
+		string[] nodeTags = node.Value<string[]>("tags");
+		if (nodeTags != null) {
+			foreach (string tag in nodeTags) {
+				if (!allTags.Contains(tag)) {
+					allTags.Add(tag);
+				}
+			}
+		}
+	}
+    allTags.Sort();
+    foreach(string tag in allTags) {
+        var tagName = ".tag-" + tag.ToLower().Replace(" ", "-");
+        <li uk-filter-control="@tagName"><a href="#">@tag</a></li>
+    }
+}
+            </ul>
+        </aside>
+        <article class="lt-back partner uk-width-1-1 uk-width-3-4@m">
+            <div class="uk-container-expand">
+                <ul class="partner-filter uk-child-width-1-2@s uk-child-width-1-3@l uk-child-width-1-1 uk-grid-match uk-flex-stretch" uk-grid>
+@{ 
+	foreach(IPublishedContent node in Model.Children()) {
+		var tags = "";
+		var title = node.Value<string>("title");
+		var blurb = node.Value<string>("blurb");
+		string[] tagList = node.Value<string[]>("tags");
+		if (tagList != null) {
+			foreach (string tag in tagList) {
+				tags += " tag-" + tag.ToLower();
+			}
+		}
+		IHtmlContent imgSrc = null;
+        if (node.HasProperty("companyLogo")) {
+		    IPublishedContent logo = node.Value<IPublishedContent>("companyLogo");
+		    if (logo != null) {
+			    imgSrc = Url.GetCropUrl(logo, height: 120, quality: 100);
+		    }
+        }
+
+		<li class="@tags">
+            <div class="uk-card">
+                <div class="uk-card-media-top">
+                    <img src="@imgSrc" alt="@title">
+                </div>
+                <div class="uk-card-body">
+                    <div class="uk-card-title">@title</div>
+                    <p>@blurb</p>
+                </div>
+                <div class="uk-card-footer">
+                    <a href="@node.Url()" class="clr-primary-2">Claim Reward</a>
+                </div>
+            </div>
+        </li>
+	}
+}
+                </ul>
+            </div>
+        </article>
+    </section>
+</div>

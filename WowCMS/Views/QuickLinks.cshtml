@@ -1,0 +1,24 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "default.cshtml";
+    var title = Model.Value<string>("title");
+    var body = Model.Value<string>("body");
+}
+<div class="uk-container-expand site">
+    <section class="general quick-links" uk-grid>
+        <article class="lt-back uk-width-1-1 uk-width-3-5@m">
+            <div class="uk-container-expand">
+                <div class="uk-card">
+                    <div class="uk-card-body">
+                        <div class="uk-card-title">
+                            <h1 class="clr-primary-1">@title</h1>
+                        </div>
+                        @Html.Raw(body)
+                    </div>
+                </div>
+            </div>
+        </article>
+        @await Html.PartialAsync("SideLinks", Model)
+    </section>
+</div>

@@ -1,0 +1,94 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+	var cards = Model.Value<IEnumerable<IPublishedElement>>("cards");
+	IPublishedElement firstCard = cards.First();
+}
+<script>
+jQuery("#frm-newsletter-subscribe").submit(function(event) {
+    event.preventDefault();
+    var $form = jQuery(this);
+    var $email = $form.find("input[name='newsletter-subscribe']");
+    var $result = $form.find("p[name='result']");
+    var $button = $form.find("button");
+    var data = { email: $email.val() };
+    $email.removeClass("uk-form-danger");
+    $result.removeClass("uk-text-danger");
+    $result.removeClass("uk-text-success");
+    $result.text(' ');
+    var regexEmail = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+    if(!regexEmail.test(data.email)) {
+        $email.addClass("uk-form-danger");
+        $result.addClass("uk-text-danger");
+        $result.text("Invalid email address");
+    } else {
+        $email.attr("disabled", "disabled");
+        $button.addClass("disabled");
+        $button.attr("disabled", "disabled");
+        $result.addClass("uk-text-success");
+        $result.text("Submitting email address for newsletter signup");
+
+        jQuery.ajax({
+            url:'/umbraco/api/form/newslettersubscribe/',
+            type:'POST',
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            success:function(res){
+                $email.attr("disabled", "disabled");
+                $button.addClass("disabled");
+                $button.attr("disabled", "disabled");
+                $result.addClass("uk-text-success");
+                $result.text("You have been successfully signed up for our newsletter");
+            },
+            error:function(res){
+                $email.addClass("uk-form-danger");
+                $result.addClass("uk-text-danger");
+                $result.text(res.responseText);
+                $email.removeAttr("disabled", "");
+                $button.removeClass("disabled");
+                $button.removeAttr("disabled");
+            }
+        });
+	}
+});
+</script>
+<article class="lt-graded-back newletter">
+    <div class="uk-container-expand">
+        <div class="uk-card">
+            <div class="uk-card-body">
+                <div class="uk-card-title">@Html.Raw(@firstCard.Value<string>("cdHeader"))</div>
+            </div>
+        </div>
+        <div class="uk-child-width-1-2@m uk-child-width-1-1 uk-flex-top" uk-grid>
+@{
+	var cardCount = 0;
+	foreach(IPublishedElement card in cards) {
+		cardCount++;
+		if (cardCount > 1) {
+			var title = card.Value<string>("cdHeader");
+			var blurb = card.Value<string>("cdBlurb");
+			var cta = card.Value<string>("cdCTA");
+            <div class="uk-card">
+                <div class="uk-card-body">
+                    @if (cta == "#newsletterform#") {
+                        <form id="frm-newsletter-subscribe">
+                            <div class="uk-card-title">@Html.Raw(@title)</div>
+                            <input name="newsletter-subscribe" class="uk-input uk-width-1-2" type="text" placeholder="Enter Your Email">
+                            <button>Subscribe</button>
+                            <p name="result"></p>
+                        </form>
+                        @Html.Raw(blurb)
+                    } else {
+                        <div class="uk-card-title">@Html.Raw(@title)</div>
+                        @Html.Raw(blurb)
+                    }
+                </div>
+            </div>
+        }
+    }
+}
+        </div>
+    </div>
+</article>

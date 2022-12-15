@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "type": "identityapp",
+      "connectionId": "",
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:umbracoDbDSN-remote",
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "mssql2": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:umbracoDbDSN-local",
+      "suggestion": "true",
+      "ignored": "true"
+    },
+    "mssql3": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:umbracoDbDSN",
+      "suggestion": "true",
+      "ignored": "true"
+    }
+  }
+}

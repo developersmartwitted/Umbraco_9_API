@@ -1,0 +1,50 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<IPublishedElement>
+@{ 
+	var theme = Model.Value<string>("theme");
+}
+<article class="lt-graded-back">
+    <div class="uk-container-expand">
+@{ 
+	var cards = Model.Value<IEnumerable<IPublishedElement>>("cards");
+	IPublishedElement firstCard = cards.First();
+    <div class="uk-card">
+        <div class="uk-card-body">
+            <div class="uk-card-title">@Html.Raw(@firstCard.Value<string>("cdHeader"))</div>
+        </div>
+    </div>
+}
+    <div class="uk-child-width-1-3@m uk-child-width-1-1 centered steps" uk-grid>
+@{ 
+	var cardCount = 0;
+	string[] colorOffset = { "4", "5", "2", "3" };
+
+	foreach(IPublishedElement card in cards) {
+		cardCount++;
+		if (cardCount > 1) {
+			var title = card.Value<string>("cdHeader");
+			var blurb = card.Value<string>("cdBlurb");
+			var cta = card.Value<string>("cdCTA");
+			var ctaLink = card.Value<string>("cdCTALink");
+			var target = "";
+			if (card.Value<bool>("cdCTANewWin")) {
+				target = "target='new'";
+			}
+            var linkColor = "clr-primary-" + colorOffset[((cardCount % 4))];
+            <div class="uk-card">
+                <div class="uk-card-body">
+                    <div class="uk-card-title">@Html.Raw(@title)</div>
+                    @Html.Raw(blurb)
+                </div>
+				@{
+					if (!string.IsNullOrEmpty(cta)) {
+						<div class="uk-card-footer">
+							<a href="@ctaLink" class="@linkColor" @target>@cta</a>
+						</div>
+					}
+				}
+            </div>
+        }
+    }
+}
+    </div>
+</article>
